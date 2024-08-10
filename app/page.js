@@ -11,7 +11,8 @@ export default function Home() {
 
   const [message, setMessage] = useState('')
 
-  const sendMessage = async() => {
+  const sendMessage = async(event) => {
+    event.preventDefault();
     setMessage('')
     setMessages((messages) => [
       ...messages,
@@ -23,20 +24,25 @@ export default function Home() {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify([...messages, {role: 'user', content: message}]),
-    }).then(async (res) => {
+      body: JSON.stringify({ message: message }),
+    })
+    .then(async (res) => {
+      if (!res.ok) {
+        console.log("Response not ok", await res.text());  // Log the error response
+        throw new Error('Network response was not ok');
+      }
+      
       const reader = res.body.getReader()
       const decoder = new TextDecoder()
-
-      let result = ''
-      return reader.read().then(function processText({done, value}){
+      
+      function processText({ done, value }) {
         if (done) {
-          return result
+          return;
         }
         const text = decoder.decode(value || new Int8Array(), {stream: true})
         setMessages((messages) => {
           let lastMessage = messages[messages.length - 1]
-          let otherMessages = messages.slice(0, messages.length -1)
+          let otherMessages = messages.slice(0, messages.length - 1)
           return [
             ...otherMessages,
             {
@@ -45,9 +51,14 @@ export default function Home() {
             },
           ]
         })
-        return reader.read().then(processtext)
-      })
+        return reader.read().then(processText)
+      }
+    
+      return reader.read().then(processText)
     })
+    .catch(error => {
+      console.error('There was a problem with the fetch operation:', error);
+    });
   }
 
   return (
