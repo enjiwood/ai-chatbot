@@ -1,7 +1,7 @@
 'use client'
 import { Stack, Box, TextField, Button } from "@mui/material"
 import Image from "next/image"
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 export default function Home() {
   const [messages, setMessages] = useState([{
@@ -10,6 +10,13 @@ export default function Home() {
 }])
 
   const [message, setMessage] = useState('')
+  const bottomScroll = useRef(null)
+
+  useEffect(() => {
+    if (bottomScroll.current) {
+      bottomScroll.current.scrollIntoView({behavior: 'smooth'})
+    }
+  }, [messages])
 
   const sendMessage = async() => {
     setMessage('')
@@ -108,6 +115,7 @@ export default function Home() {
                 </Box>
               ))
             }
+            <div ref={bottomScroll}></div>
           </Stack>
           <Stack
             direction="row"
