@@ -11,8 +11,7 @@ export default function Home() {
 
   const [message, setMessage] = useState('')
 
-  const sendMessage = async(event) => {
-    event.preventDefault();
+  const sendMessage = async() => {
     setMessage('')
     setMessages((messages) => [
       ...messages,
