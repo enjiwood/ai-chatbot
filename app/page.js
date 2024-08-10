@@ -124,6 +124,13 @@ export default function Home() {
                   "& fieldset": { border: 'none' }
                 }}
                 onChange={(e) => setMessage(e.target.value)}
+                onKeyDown={(ev) => {
+                  console.log(`Pressed keyCode ${ev.key}`);
+                  if (ev.key === 'Enter') {
+                    sendMessage()
+                    ev.preventDefault()
+                  }
+                }}
               />
             </Box>
             <Button
