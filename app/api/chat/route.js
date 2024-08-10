@@ -37,7 +37,7 @@ export async function POST(req) {
         let groq;
         try {
             groq = new Groq({
-                apiKey: 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,
+                apiKey: process.env.GROQ_API_KEY,
                 dangerouslyAllowBrowser: true
             });
         } catch (groqInitError) {
